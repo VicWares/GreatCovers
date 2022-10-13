@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221009A GreatCovers
+ * version 221013 GreatCovers
  * Reads/cleans input URL and returns all Elements and Document
  *******************************************************************/
 import org.jsoup.Jsoup;

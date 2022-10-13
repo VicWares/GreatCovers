@@ -4,18 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221009  Initial.  Rework of earlier attempts.">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelReader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelWriter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" afterDir="false" />
+    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +50,26 @@
       <recent name="org.wintrisstech" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.wintrisstech.Main" />
+      <module name="GreatCovers" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.wintrisstech.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -66,8 +81,32 @@
       <workItem from="1665342719033" duration="3122000" />
       <workItem from="1665351895299" duration="910000" />
       <workItem from="1665352832205" duration="1125000" />
-      <workItem from="1665354419384" duration="6307000" />
+      <workItem from="1665354419384" duration="14492000" />
+      <workItem from="1665420648269" duration="2230000" />
+      <workItem from="1665436508073" duration="6894000" />
+      <workItem from="1665457332659" duration="6285000" />
+      <workItem from="1665508203249" duration="9818000" />
+      <workItem from="1665520838950" duration="598000" />
+      <workItem from="1665532650131" duration="1700000" />
+      <workItem from="1665537197810" duration="6727000" />
+      <workItem from="1665547061031" duration="488000" />
+      <workItem from="1665547556826" duration="760000" />
+      <workItem from="1665548626792" duration="845000" />
+      <workItem from="1665592139592" duration="4463000" />
+      <workItem from="1665609277597" duration="2595000" />
+      <workItem from="1665611932624" duration="7686000" />
+      <workItem from="1665624891086" duration="4368000" />
+      <workItem from="1665629344357" duration="5499000" />
+      <workItem from="1665695200317" duration="6885000" />
     </task>
+    <task id="LOCAL-00001" summary="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver">
+      <created>1665366702864</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1665366702864</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -86,6 +125,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="GreatCovers version 221009  Initial.  Rework of earlier attempts." />
-    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221009  Initial.  Rework of earlier attempts." />
+    <MESSAGE value="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver" />
+    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver" />
   </component>
 </project>

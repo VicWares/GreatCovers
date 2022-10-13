@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221009A GreatCovers
+ * version 221013 GreatCovers
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -111,49 +111,49 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).getCell(10).setCellStyle(leftStyle);
         sportDataSheet.getRow(eventIndex).getCell(10).setCellValue(homeCompleteNameMap.get(dataEventID));
 
-        sportDataSheet.getRow(eventIndex).createCell(11);// Home team short name e.g. DAL Column L 12
-        sportDataSheet.getRow(eventIndex).getCell(11).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(11).setCellValue(homeShortNameMap.get(dataEventID));
+//        sportDataSheet.getRow(eventIndex).createCell(11);// Home team short name e.g. DAL Column L 12
+//        sportDataSheet.getRow(eventIndex).getCell(11).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(11).setCellValue(homeShortNameMap.get(dataEventID));
 
-        sportDataSheet.getRow(eventIndex).createCell(14);// Home Spread Close Odds e.g. +4.0 Column O 15
-        sportDataSheet.getRow(eventIndex).getCell(14).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(14).setCellValue(homeSpreadCloseOddsMap.get(dataEventID));
+//        sportDataSheet.getRow(eventIndex).createCell(14);// Home Spread Close Odds e.g. +4.0 Column O 15
+//        sportDataSheet.getRow(eventIndex).getCell(14).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(14).setCellValue(homeSpreadCloseOddsMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(12);//Spread home odds, column M
+//        sportDataSheet.getRow(eventIndex).getCell(12).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(homeSpreadOddsMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
+//        sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(homeMoneyLineOddsMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(18);//MoneyLine Bet365 home odds, column S19
+//        sportDataSheet.getRow(eventIndex).getCell(18).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(18).setCellValue(homeMoneylineOdds);
+//
+//        sportDataSheet.getRow(eventIndex).createCell(25);//Away team complete name Z26 e.g. Washingtopn Commanders
+//        sportDataSheet.getRow(eventIndex).getCell(25).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(25).setCellValue(awayCompleteNameMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(26);//Away Short Name AA27
+//        sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awayShortNameMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
+//        sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(awayMoneyLineOddsMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(33);//MoneyLine Bet365 away close odds, column AH34
+//        sportDataSheet.getRow(eventIndex).getCell(33).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(33).setCellValue(awayMoneylineCloseOddsMap.get(dataEventID));
+//
+//        sportDataSheet.getRow(eventIndex).createCell(66);
+//        sportDataSheet.getRow(eventIndex).getCell(66).setCellStyle(leftStyle);
+//        sportDataSheet.getRow(eventIndex).getCell(66).setCellValue(atsHome);
 
-        sportDataSheet.getRow(eventIndex).createCell(12);//Spread home odds, column M
-        sportDataSheet.getRow(eventIndex).getCell(12).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(homeSpreadOddsMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(homeMoneyLineOddsMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(18);//MoneyLine Bet365 home odds, column S19
-        sportDataSheet.getRow(eventIndex).getCell(18).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(18).setCellValue(homeMoneylineOdds);
-
-        sportDataSheet.getRow(eventIndex).createCell(25);//Away team complete name Z26 e.g. Washingtopn Commanders
-        sportDataSheet.getRow(eventIndex).getCell(25).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(25).setCellValue(awayCompleteNameMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(26);//Away Short Name AA27
-        sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awayShortNameMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(awayMoneyLineOddsMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(33);//MoneyLine Bet365 away close odds, column AH34
-        sportDataSheet.getRow(eventIndex).getCell(33).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(33).setCellValue(awayMoneylineCloseOddsMap.get(dataEventID));
-
-        sportDataSheet.getRow(eventIndex).createCell(66);
-        sportDataSheet.getRow(eventIndex).getCell(66).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(66).setCellValue(atsHome);
-
-        sportDataSheet.getRow(eventIndex).createCell(64);
+        sportDataSheet.getRow(eventIndex).createCell(64);//Consensus ATS away, column BM65
         sportDataSheet.getRow(eventIndex).getCell(64).setCellStyle(leftStyle);
-        sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(atsAway);
+        sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(atsAwaysMap.get(dataEventID));
 
         sportDataSheet.getRow(eventIndex).createCell(70);
         sportDataSheet.getRow(eventIndex).getCell(70).setCellStyle(leftStyle);
