@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221013 GreatCovers
+ * version 221014 GreatCovers
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -12,6 +12,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static org.wintrisstech.Main.atsAwayMap;
 public class DataCollector
 {
     private static HashMap<String, String> bet365HomeTeamOdds = new HashMap<>();
@@ -67,9 +69,9 @@ public class DataCollector
     private HashMap<String, String> awayFullNameMap = new HashMap<>();
     private HashMap<String, String> homeShortNameMap = new HashMap<>();
     private HashMap<String, String> awayShortNameMap = new HashMap<>();
-    private HashMap<String, String> atsHomesMap = new HashMap<>();
-    private HashMap<String, String> atsAwaysMap = new HashMap<>();
-    private HashMap<String, String> ouUndersMap = new HashMap<>();
+    private HashMap<String, String> atsHomeMap = new HashMap<>();
+    //private HashMap<String, String> atsAwaysMap = new HashMap<>();
+    private HashMap<String, String> ouHomeMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
     private HashMap<String, String> idXref = new HashMap<>();
@@ -131,28 +133,28 @@ public class DataCollector
     public void collectConsensusData(Elements thisMatchupConsensus, String dataEventId)
     {
         this.dataEventId = String.valueOf(dataEventId);
-        String ouOver = null;
-        String ouUnder = null;
+        String ouAway = null;
+        String ouHome = null;
         String atsHome = null;
         String atsAway = null;
         Elements rightConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersright");//Home/Under
         Elements leftConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersleft");//Away/Over
         try//To catch missing consensus data due to delayed or cancelled game
         {
-            ouUnder = rightConsensus.select("div").get(1).text();
-            ouOver = leftConsensus.select("div").get(1).text();
-            atsHome = leftConsensus.select("div").get(0).text();
-            atsAway = rightConsensus.select("div").get(0).text();
+            ouHome = rightConsensus.select("div").get(1).text();
+            System.out.println("DC145 ouHome => " + ouHome);
+            ouAway = leftConsensus.select("div").get(1).text();
+            atsAway = leftConsensus.select("div").get(0).text();
+            atsHome = rightConsensus.select("div").get(0).text();
         }
         catch (Exception e)
         {
-            System.out.println("DC121 DataCollector, no consensus data for " + gameIdentifier);
+            System.out.println("DC151 DataCollector, no consensus data for " + gameIdentifier);
         }
-        ouOversMap.put(String.valueOf(dataEventId), ouOver);
-        ouUndersMap.put(String.valueOf(dataEventId), ouUnder);
-        atsHomesMap.put(String.valueOf(dataEventId), atsAway);
-        atsAwaysMap.put(String.valueOf(dataEventId), atsHome);
-        System.out.println("DC154..." + gameIdentifier + "...." + atsAwaysMap);
+        Main.ouAwayMap.put(dataEventId, ouAway);
+        Main.ouHomeMap.put(String.valueOf(dataEventId), ouHome);
+        Main.atsHomeMap.put(String.valueOf(dataEventId), atsAway);
+        Main.atsAwayMap.put(String.valueOf(dataEventId), atsHome);
     }
     public void collectOddsData(WebElement moneyLineElements)
     {
@@ -182,11 +184,11 @@ public class DataCollector
     }
     public HashMap<String, String> getAtsHomeMap()
     {
-        return atsHomesMap;
+        return atsHomeMap;
     }
     public HashMap<String, String> getAtsAwayMap()
     {
-        return atsAwaysMap;
+        return atsAwayMap;
     }
     public HashMap<String, String> getOuAwayMap()
     {
@@ -194,12 +196,9 @@ public class DataCollector
     }
     public HashMap<String, String> getOuHomeMap()
     {
-        return ouUndersMap;
+        return ouHomeMap;
     }
-    public HashMap<String, String> getGameIdentifierMap()
-    {
-        return gameIdentifierMap;
-    }
+    public HashMap<String, String> getGameIdentifierMap() {return gameIdentifierMap;}
     public void setCityNameMap(HashMap<String, String> cityNameMap)
     {
         this.cityNameMap = cityNameMap;

@@ -3,7 +3,7 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221013 GreatCovers
+ * version 221014 GreatCovers
  **********************************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
@@ -21,9 +21,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 public class Main
 {
+    public static HashMap<String,String> ouAwayMap = new HashMap<>();
+    public static HashMap<String,String> ouHomeMap= new HashMap<>();
+    public static HashMap<String,String> atsHomeMap= new HashMap<>();
+    public static HashMap<String,String> atsAwayMap= new HashMap<>();
     private static String weekDate;
     private static XSSFWorkbook sportDataWorkbook;
-    private static HashMap<String, String> xRefMap = new HashMap<>();
+    public static HashMap<String, String> xRefMap = new HashMap<>();
     public static WebSiteReader webSiteReader = new WebSiteReader();
     public static ExcelReader excelReader = new ExcelReader();
     public static DataCollector dataCollector = new DataCollector();
@@ -35,7 +39,7 @@ public class Main
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
     private Elements oddsElements;
-    private static String version = "GreatCovers 221009A";
+    private static String version = "GreatCovers 221014";
     private static String season = "2022";
     private static String weekNumber = "1";
     public static WebDriver driver = new SafariDriver();
@@ -52,7 +56,6 @@ public class Main
         System.out.println("SharpMarkets, version " + version + ", Copyright 2022 Dan Farris");
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
         new CityNameMapBuilder();//Builds full city name map to correct for Covers variations in team city names
         new WeekDateMapBuilder();//Builds Game dates for current week
         nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Jsoup Elements
@@ -69,33 +72,27 @@ public class Main
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             dataEventId = entry.getKey();
-            System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------START MAIN LOOP");
             String dataGame = xRefMap.get(dataEventId);
-            System.out.println("dataEVentId =  " + dataEventId);
-            System.out.println("dataGame =  " + dataGame);
+            System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "-------------------------------------------------------------------------------------------START MAIN LOOP");
             consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
-            excelBuilder.setAtsHomesMap(dataCollector.getAtsHomeMap());
-            excelBuilder.setAtsAwaysMap(dataCollector.getAtsAwayMap());
-            excelBuilder.setOuOversMap(dataCollector.getOuAwayMap());
-            excelBuilder.setOuUndersMap(dataCollector.getOuHomeMap());
             try
             {
                 WebElement oddsButton = Main.driver.findElement(By.xpath("//a[@href='/sport/football/nfl/odds']"));
                 js.executeScript("arguments[0].click();", oddsButton);
-                System.out.println("Main81....Success! clicked on odds button...sleepy, sleepy 2 seconds");
-                Thread.sleep(2000);
+                System.out.println("Main84....Success! clicked on odds button");
             }
             catch (Exception e)
             {
-                System.out.println("Main86.....can't find odds page.");
+                System.out.println("Main88.....can't find odds page.");
             }
-            String s = "[data-book='bet365'][data-game='" + dataGame + "'][data-type='moneyline']";//.__bookOdds.__awayOdds.__american";
-            System.out.println(s);
-            WebElement moneyline = driver.findElement(By.cssSelector(s));
-            excelBuilder.buildExcel(sportDataWorkbook, dataEventId, excelLineNumberIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            System.out.println("Main93 END MAIN LOOP--------------------------------------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
+//            String s = "[data-book='bet365'][data-game='" + dataGame + "'][data-type='moneyline']";//.__bookOdds.__awayOdds.__american";
+//            System.out.println(s);
+           // WebElement moneyline = driver.findElement(By.cssSelector(s));
+            excelBuilder.buildExcel(sportDataWorkbook, dataEventId, excelLineNumberIndex);
+            System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " ---------------------------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }
+        excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
