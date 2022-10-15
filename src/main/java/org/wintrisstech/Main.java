@@ -3,7 +3,7 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221014 GreatCovers
+ * version 221014A GreatCovers
  **********************************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
@@ -34,7 +34,6 @@ public class Main
     private static Elements nflElements;
     private static Elements weekElements;
     private static String dataEventId;
-    public static ExcelBuilder excelBuilder = new ExcelBuilder();
     public static ExcelWriter excelWriter = new ExcelWriter();
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
@@ -54,6 +53,7 @@ public class Main
     public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("SharpMarkets, version " + version + ", Copyright 2022 Dan Farris");
+        weekDate = weekDateMap.get(weekNumber);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         new CityNameMapBuilder();//Builds full city name map to correct for Covers variations in team city names
@@ -62,13 +62,9 @@ public class Main
         weekElements = nflElements.select(".cmg_game_data.cmg_matchup_game_box");//Jsoup Elements
         driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDateMap.get(weekNumber));//Current week scores & matchups
         clickCookies(53);
-        System.out.println("sleepy, sleepy...line #54");
-        Thread.sleep(10000);
         xRefMap = buildXref(weekElements);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
         sportDataWorkbook = excelReader.readSportDataWorkbook();
-        System.out.println(xRefMap);
-        System.out.println(weekDateMap);
-        System.out.println(cityNameMap);
+        ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             dataEventId = entry.getKey();
@@ -80,25 +76,23 @@ public class Main
             {
                 WebElement oddsButton = Main.driver.findElement(By.xpath("//a[@href='/sport/football/nfl/odds']"));
                 js.executeScript("arguments[0].click();", oddsButton);
-                System.out.println("Main84....Success! clicked on odds button");
             }
             catch (Exception e)
             {
-                System.out.println("Main88.....can't find odds page.");
+                System.out.println("Main87.....can't find odds page.");
             }
 //            String s = "[data-book='bet365'][data-game='" + dataGame + "'][data-type='moneyline']";//.__bookOdds.__awayOdds.__american";
 //            System.out.println(s);
            // WebElement moneyline = driver.findElement(By.cssSelector(s));
-            excelBuilder.buildExcel(sportDataWorkbook, dataEventId, excelLineNumberIndex);
+            excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
             System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " ---------------------------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }
         excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
-        System.out.println("Main100........Writing to " + sportDataWorkbook);
         excelWriter.closeOutputStream();
-        System.out.println("Main102......Completed GreatCovers Successfully...Hooray...Quitting Safari WebDriver");
+        System.out.println("Main102......Completed GreatCovers Successfully...Hooray...");
     }
     private static void clickCookies(int sourceLineNumber)
     {

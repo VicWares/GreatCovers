@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221014 GreatCovers
+ * version 221014A GreatCovers
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -66,7 +66,11 @@ public class ExcelBuilder
     private HashMap <String,String> awayCompleteNameMap = new HashMap();//e.g Dallas Cowboys
     private HashMap<String, String> awayMoneylineCloseOddsMap = new HashMap<>();
     XSSFWorkbook sportDataWorkbook;
-    public void buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventID, int eventIndex)
+    public ExcelBuilder(XSSFWorkbook sportDataWorkbook)
+    {
+        this.sportDataWorkbook = sportDataWorkbook;
+    }
+    public void buildExcel(String dataEventID, int eventIndex)
     {
         sportDataSheet = sportDataWorkbook.getSheet("Data");
         this.sportDataWorkbook = sportDataWorkbook;
@@ -89,7 +93,9 @@ public class ExcelBuilder
     }
     public void enterData()
     {
-        String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute();
+        int minute = LocalTime.now().getMinute();
+        minute = (minute < 10) ? (minute + 10) : minute;//To stop minutes = 7, e.g.
+        String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + minute;
         CellStyle leftStyle = sportDataWorkbook.createCellStyle();
         leftStyle.setAlignment(LEFT);
         CellStyle centerStyle = sportDataWorkbook.createCellStyle();
