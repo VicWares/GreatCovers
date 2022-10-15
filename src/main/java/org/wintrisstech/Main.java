@@ -3,7 +3,7 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221014A GreatCovers
+ * version 221015 GreatCovers
  **********************************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
@@ -17,6 +17,7 @@ import org.openqa.selenium.safari.SafariDriver;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 public class Main
@@ -38,9 +39,9 @@ public class Main
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
     private Elements oddsElements;
-    private static String version = "GreatCovers 221014";
+    private static String version = "GreatCovers 221015";
     private static String season = "2022";
-    private static String weekNumber = "1";
+    private static String weekNumber = "6";
     public static WebDriver driver = new SafariDriver();
     public static JavascriptExecutor js = (JavascriptExecutor) driver;
     private Actions act = new Actions(driver);
@@ -58,11 +59,14 @@ public class Main
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         new CityNameMapBuilder();//Builds full city name map to correct for Covers variations in team city names
         new WeekDateMapBuilder();//Builds Game dates for current week
-        nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Jsoup Elements
-        weekElements = nflElements.select(".cmg_game_data.cmg_matchup_game_box");//Jsoup Elements
-        driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDateMap.get(weekNumber));//Current week scores & matchups
+//        nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Jsoup Elements
+//        weekElements = nflElements.select(".cmg_game_data.cmg_matchup_game_box");//Jsoup Elements
+        driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDateMap.get(weekNumber));//Current week scores & matchups page
         clickCookies(53);
-        xRefMap = buildXref(weekElements);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
+        List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));
+        System.out.println("Main67 events => " + events.size());
+        xRefMap = buildXref(events);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
+        System.out.println("Main68...xRefMap => " + xRefMap);
         sportDataWorkbook = excelReader.readSportDataWorkbook();
         ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
@@ -70,24 +74,29 @@ public class Main
             dataEventId = entry.getKey();
             String dataGame = xRefMap.get(dataEventId);
             System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "-------------------------------------------------------------------------------------------START MAIN LOOP");
-            consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
-            dataCollector.collectConsensusData(consensusElements, dataEventId);
+            //consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);//
+            //dataCollector.collectConsensusData(consensusElements, dataEventId);
+
+            driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);//Main covers consensus page
             try
             {
-                WebElement oddsButton = Main.driver.findElement(By.xpath("//a[@href='/sport/football/nfl/odds']"));
-                js.executeScript("arguments[0].click();", oddsButton);
+                String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
+                driver.findElement(By.cssSelector(s)).click();
+                clickCookies(85);
+                System.out.println("got it...and clicked...Money Leaders!");
             }
             catch (Exception e)
             {
-                System.out.println("Main87.....can't find odds page.");
+                System.out.println("Main84.....can't find Money Leaders button.");
             }
-//            String s = "[data-book='bet365'][data-game='" + dataGame + "'][data-type='moneyline']";//.__bookOdds.__awayOdds.__american";
-//            System.out.println(s);
-           // WebElement moneyline = driver.findElement(By.cssSelector(s));
-            excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
+            String MlATSaway = String.valueOf(Main.driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[4]/div[3]/div/div[1]/div[2]")));
+            System.out.println("Main88...MlATSaway => " + MlATSaway);
+            driver.navigate().back();
+
+            //excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
             System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " ---------------------------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }
-        excelBuilder.enterData();
+        //excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
@@ -178,15 +187,14 @@ public class Main
             weekDateMap.put("19", "2023-02-05");
         }
     }
-    public static HashMap<String, String> buildXref(Elements weekElements)
+    public static HashMap<String, String> buildXref(List<WebElement> events)
     {
-        for (Element e : weekElements)
+        for (WebElement e : events)
         {
-            String dataLinkString = e.attr("data-link");
-            String[] dlsa = dataLinkString.split("/");
-            String dataLink = dlsa[5];
-            String dataEvent = e.attr("data-event-id");
-            xRefMap.put(dataEvent, dataLink);
+            String dataEventId = e.getAttribute("data-event-id");
+            String dataGame = e.getAttribute("data-link");
+            dataGame = dataGame.substring(28, 34);
+            xRefMap.put(dataEventId, dataGame);
         }
         return xRefMap;
     }
