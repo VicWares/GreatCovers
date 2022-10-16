@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221014A.  Clean up. Fixed single digit minutes in time record.">
+    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" afterDir="false" />
@@ -104,7 +104,9 @@
       <workItem from="1665755884750" duration="600000" />
       <workItem from="1665784202865" duration="7530000" />
       <workItem from="1665792281238" duration="12990000" />
-      <workItem from="1665852275738" duration="8024000" />
+      <workItem from="1665852275738" duration="8446000" />
+      <workItem from="1665869456237" duration="5918000" />
+      <workItem from="1665877566331" duration="9968000" />
     </task>
     <task id="LOCAL-00001" summary="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver">
       <created>1665366702864</created>
@@ -134,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665800240926</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders.">
+      <created>1665861149246</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1665861149246</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +166,7 @@
     <MESSAGE value="GreatCovers version 221013  Getting consensus with webSiteReader and JSoup.  WebDriver components still included an working." />
     <MESSAGE value="GreatCovers version 221014.  Getting Consensus OK...clean up." />
     <MESSAGE value="GreatCovers version 221014A.  Clean up. Fixed single digit minutes in time record." />
-    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221014A.  Clean up. Fixed single digit minutes in time record." />
+    <MESSAGE value="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders." />
+    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders." />
   </component>
 </project>

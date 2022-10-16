@@ -3,8 +3,9 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221015 GreatCovers
+ * version 221015A GreatCovers
  **********************************************************************************/
+import com.google.common.cache.AbstractCache;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ public class Main
     public static ExcelWriter excelWriter = new ExcelWriter();
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
+    public static HashMap<String, String > MLATSawayMap = new HashMap<>();
     private Elements oddsElements;
     private static String version = "GreatCovers 221015";
     private static String season = "2022";
@@ -59,44 +62,39 @@ public class Main
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         new CityNameMapBuilder();//Builds full city name map to correct for Covers variations in team city names
         new WeekDateMapBuilder();//Builds Game dates for current week
-//        nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Jsoup Elements
-//        weekElements = nflElements.select(".cmg_game_data.cmg_matchup_game_box");//Jsoup Elements
-        driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDateMap.get(weekNumber));//Current week scores & matchups page
-        clickCookies(53);
-        List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));
-        System.out.println("Main67 events => " + events.size());
+        driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Current week scores & matchups page
+        clickCookies(64);
+        List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));//Dummy elements to determine how many games to index this week...don't use the Element contents
+        System.out.println("Main66 events => " + events.size());
         xRefMap = buildXref(events);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
         System.out.println("Main68...xRefMap => " + xRefMap);
         sportDataWorkbook = excelReader.readSportDataWorkbook();
         ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
-            dataEventId = entry.getKey();
-            String dataGame = xRefMap.get(dataEventId);
-            System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "-------------------------------------------------------------------------------------------START MAIN LOOP");
-            //consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);//
-            //dataCollector.collectConsensusData(consensusElements, dataEventId);
-
+            dataEventId = entry.getKey();//Matchup index used almost everywhere...
+            String dataGame = xRefMap.get(dataEventId);//Used sometimes to index matchups
+            System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "-------------<=====================>------------------------------------------------------------------------------START MAIN LOOP");
             driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);//Main covers consensus page
             try
             {
                 String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
                 driver.findElement(By.cssSelector(s)).click();
-                clickCookies(85);
-                System.out.println("got it...and clicked...Money Leaders!");
+                clickCookies(81);
+                String MlATSaway = Main.driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[5]/div[2]/div[1]/div[2]")).getText().trim();
+                System.out.println("Main85...MLATSaway " + MlATSaway);
+                Main.MLATSawayMap.put(dataEventId, MlATSaway);
+                System.out.println("Main86........" + Main.MLATSawayMap);
+                System.out.println("Main87....got MLATSaway...and clicked...Money Leaders!");
             }
             catch (Exception e)
             {
-                System.out.println("Main84.....can't find Money Leaders button.");
+                System.out.println("Main90.....can't find Money Leaders button.");
             }
-            String MlATSaway = String.valueOf(Main.driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[4]/div[3]/div/div[1]/div[2]")));
-            System.out.println("Main88...MlATSaway => " + MlATSaway);
-            driver.navigate().back();
-
-            //excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
-            System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " ---------------------------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
+            excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
+            System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }
-        //excelBuilder.enterData();
+        excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
