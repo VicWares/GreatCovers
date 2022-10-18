@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet.">
+    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221017.  Finally running through to writing SportData without WebReader...totally Selenium...no JSoup. Not getting everything to excel sheet yet.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelReader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +116,11 @@
       <workItem from="1666040991524" duration="5517000" />
       <workItem from="1666049386688" duration="997000" />
       <workItem from="1666062246120" duration="716000" />
-      <workItem from="1666063448630" duration="2070000" />
+      <workItem from="1666063448630" duration="2391000" />
+      <workItem from="1666107052899" duration="523000" />
+      <workItem from="1666108037669" duration="3372000" />
+      <workItem from="1666117283368" duration="2239000" />
+      <workItem from="1666122878179" duration="7546000" />
     </task>
     <task id="LOCAL-00001" summary="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver">
       <created>1665366702864</created>
@@ -163,7 +164,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665889577945</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="GreatCovers version 221017.  Finally running through to writing SportData without WebReader...totally Selenium...no JSoup. Not getting everything to excel sheet yet.">
+      <created>1666065759081</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1666065759081</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -188,6 +196,7 @@
     <MESSAGE value="GreatCovers version 221014A.  Clean up. Fixed single digit minutes in time record." />
     <MESSAGE value="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders." />
     <MESSAGE value="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet." />
-    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet." />
+    <MESSAGE value="GreatCovers version 221017.  Finally running through to writing SportData without WebReader...totally Selenium...no JSoup. Not getting everything to excel sheet yet." />
+    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221017.  Finally running through to writing SportData without WebReader...totally Selenium...no JSoup. Not getting everything to excel sheet yet." />
   </component>
 </project>

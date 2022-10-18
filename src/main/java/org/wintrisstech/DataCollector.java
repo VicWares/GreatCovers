@@ -2,13 +2,18 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221017 GreatCovers
+ * version 221018 GreatCovers
  * Builds data event id array and calendar date array
  *******************************************************************/
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -41,12 +46,12 @@ public class DataCollector
     private String dataEventId;
     private String MLhomeOdds;
     private String MLawayOdds;
-    private String homeTeamNickname;//e.g. Browns...data-home-team-nickname-search
+    private String homeNickname;//e.g. Browns...data-home-team-nickname-search
     private String awayTeamNickname;//e.g Texans...data-away-team-nickname-search
     private String awayTeamFullName;//e.g. Cleveland...data-home-team-fullname-search
     private String homeTeamFullName;//e.g Houston...data-home-team-fullname-search
-    private String awayTeamCompleteName;//e.g. Kansas City Chiefs
-    private String homeTeamCompleteName;//e.g Houston Texans
+    private String awayCompleteName;//e.g. Kansas City Chiefs
+    private String homeCompleteName;//e.g Houston Texans
     private String gameIdentifier;//e.g 2020 - Houston Texans @ Kansas City Chiefs
     private String awayTeamScore;
     private String homeTeamScore;
@@ -64,7 +69,7 @@ public class DataCollector
     private ArrayList<String> thisWeekAwayTeams = new ArrayList<String>();
     private HashMap<String, String> gameDatesMap = new HashMap<>();
     public static HashMap<String, String> gameIdentifierMap = new HashMap<>();
-    private HashMap<String, String> homeFullNameMap = new HashMap<>();
+    public static HashMap<String, String> homeFullNameMap = new HashMap<>();
     private HashMap<String, String> awayFullNameMap = new HashMap<>();
     private HashMap<String, String> homeShortNameMap = new HashMap<>();
     private HashMap<String, String> awayShortNameMap = new HashMap<>();
@@ -86,19 +91,55 @@ public class DataCollector
     private String homeShortName;
     private String month;
     private String day;
+    private HashMap<String, String> homeCityMap = new HashMap<>();
+    private HashMap<String, String> homeNicknameMap = new HashMap<>();
+    private XSSFWorkbook sportDataWorkbook;
+    private XSSFSheet sportDataSheet;
     public void collectTeamDataForThisWeek()//From covers.com website for this week's matchups
     {
+        sportDataSheet = sportDataWorkbook.getSheet("Data");
+        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ weekDate);//Web driver has all team info for this week
         for (String dataEventId : Main.xRefMap.keySet())//Build week matchup IDs array
         {
-            Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ weekDate);
-            WebElement homeTeamFullNameElement = Main.driver.findElement(By.cssSelector("[data-home-team-fullname-search][data-event-id='" + dataEventId + "']"));
-            String homeTeamFullName = homeTeamFullNameElement.getAttribute("data-home-team-fullname-search");
-//            homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
-//            homeTeamShortName = weekElements.attr("data-home-team-shortname-search");//Home team abbreviation e.g. LAR
-//            awayTeamShortName = weekElements.attr("data-away-team-shortname-search");//Home team abbreviation e.g. BUF
-//            homeTeamCity = e.attr("data-home-team-city-search");
-//            homeTeamCity = cityNameMap.get(homeTeamCity);
-//            homeTeamCompleteName = homeTeamCity + " " + homeTeamNickname;
+            int excelRowIndex = excelRowIndexMap.get(dataEventId);
+            WebElement dataEventIdElement = Main.driver.findElement(By.cssSelector("[data-event-id='" + dataEventId + "']"));//Driver gets all team elements associated with this dataEventId
+
+            int minute = LocalTime.now().getMinute();
+            minute = (minute < 10) ? (minute + 10) : minute;//To stop time minutes = 7, e.g...should be 07 minutes
+            String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + minute;
+            System.out.println("DC110...entering excel data to row: " + excelRowIndex);
+            sportDataSheet.getRow(0).createCell(0);//Column A1, Report time e.g. 10/18/22 13:17
+            sportDataSheet.getRow(0).getCell(0).setCellValue(time);
+
+            String homeFullName = dataEventIdElement.getAttribute("data-home-team-fullname-search");//e.g. Dallas
+            String awayFullname = dataEventIdElement.getAttribute("data-away-team-fullname-search");//e.g. Miami
+            String homeNickname = dataEventIdElement.getAttribute("data-home-team-nickname-search");//e.g. Texans
+            String awayNickname = dataEventIdElement.getAttribute("data-away-team-nickname-search");//e.g. Dolphins
+            homeCompleteName = homeFullName + " " + homeNickname;
+            awayCompleteName = awayFullname + " " + awayNickname;
+            gameIdentifier = season + " - " + awayCompleteName + " @ " + homeCompleteName;//Column A1, gameIentifier e.g. 2022-Buffalo Bills @ Los Angles Rams
+            sportDataSheet.getRow(excelRowIndex).createCell(0);
+            sportDataSheet.getRow(excelRowIndex).getCell(0).setCellValue(gameIdentifier);
+
+            sportDataSheet.getRow(excelRowIndex).createCell(1);//Column B2, date e.g. 2022-10-06
+            sportDataSheet.getRow(excelRowIndex).getCell(1).setCellValue(Main.weekDate);
+
+            sportDataSheet.getRow(excelRowIndex).createCell(2);//Column C3, Season
+            sportDataSheet.getRow(excelRowIndex).getCell(2).setCellValue(Main.season);
+
+            sportDataSheet.getRow(excelRowIndex).createCell(3);//Column D4 NFL week e.g. 5
+            sportDataSheet.getRow(excelRowIndex).getCell(3).setCellValue("Week " + Main.weekNumber);
+
+            sportDataSheet.getRow(excelRowIndex).createCell(10);// Column K11, Home team full name e.g. Dallas Coyboys Column K11
+            sportDataSheet.getRow(excelRowIndex).getCell(10).setCellValue(homeCompleteName);
+
+//            String totalHomeCloseOdds = String.valueOf(Main.driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
+//            sportDataSheet.getRow(excelRowIndex).createCell(64);// BM65 ats away odds
+//            sportDataSheet.getRow(excelRowIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventId));
+            //            homeTeamCity = cityNameMap.get(homeTeamCity);
+            //            homeTeamShortName = weekElements.attr("data-home-team-shortname-search");//Home team abbreviation e.g. LAR
+            //            awayTeamShortName = weekElements.attr("data-away-team-shortname-search");//Home team abbreviation e.g. BUF
+            //            homeTeamCity = e.attr("data-home-team-city-search");
 //            awayTeamFullName = e.attr("data-away-team-fullname-search");//e.g. Dallas
 //            awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
 //            awayTeamCity = e.attr("data-away-team-city-search");
@@ -115,7 +156,6 @@ public class DataCollector
 //            gameIdentifierMap.put(dataEventId, gameIdentifier);
 //            thisWeekHomeTeams.add(homeTeamCompleteName);
 //            thisWeekAwayTeams.add(awayTeamCompleteName);
-            homeFullNameMap.put(dataEventId, homeTeamFullName);
 //            awayFullNameMap.put(dataEventId, awayTeamFullName);
 //            homeShortNameMap.put(dataEventId, homeTeamShortName);
 //            awayShortNameMap.put(dataEventId, awayTeamShortName);
@@ -155,17 +195,20 @@ public class DataCollector
     }
     public void collectOddsData(WebElement moneyLineElements)
     {
-        try
-        {
-            System.out.println("DC169 Starting collectTotalHomeCloseOdds()");
-            String totalHomeCloseOdds = String.valueOf(driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
-            System.out.println("DC171 totalHomeCloseOdds => " + totalHomeCloseOdds);
-        }
-        catch (Exception e)
-        {
-            System.out.println("DC175 Can't find totalHomeCloseOdds");
-            throw new RuntimeException(e);
-        }
+//        String totalHomeCloseOdds = String.valueOf(Main.driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")))
+//        sportDataSheet.getRow(excelRowIndex).createCell(64);// BM65 ats away odds
+//        sportDataSheet.getRow(excelRowIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventId));
+//        try
+//        {
+//            System.out.println("DC169 Starting collectTotalHomeCloseOdds()");
+//            String totalHomeCloseOdds = String.valueOf(driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
+//            System.out.println("DC171 totalHomeCloseOdds => " + totalHomeCloseOdds);
+//        }
+//        catch (Exception e)
+//        {
+//            System.out.println("DC175 Can't find totalHomeCloseOdds");
+//            throw new RuntimeException(e);
+//        }
     }
     public HashMap<String, String> getHomeFullNameMap()
     {
@@ -243,6 +286,10 @@ public class DataCollector
     public void setThisSeason(String thisSeason)
     {
         this.thisSeason = thisSeason;
+    }
+    public void setSportDataWorkbook(XSSFWorkbook sportDataWorkbook)
+    {
+        this.sportDataWorkbook = sportDataWorkbook;
     }
 }
 

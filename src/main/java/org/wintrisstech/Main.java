@@ -3,8 +3,9 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221017 GreatCovers
+ * version 221018 GreatCovers
  **********************************************************************************/
+import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class Main
 {
     public static String weekDate;
+    public static HashMap<String,String> homeCompleteNameMap = new HashMap<>();
     private static XSSFWorkbook sportDataWorkbook;
     public static ExcelReader excelReader = new ExcelReader();
     public static DataCollector dataCollector = new DataCollector();
@@ -67,6 +69,7 @@ public class Main
         excelRowIndexMap = buildExcelRowIndexMap();
         System.out.println("Main67...Excel Row index Map => " + excelRowIndexMap);
         sportDataWorkbook = excelReader.readSportDataWorkbook();
+        dataCollector.setSportDataWorkbook(sportDataWorkbook);
         System.out.println("Main78 sportDataWorkbook => " + sportDataWorkbook);
         ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
         Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + Main.weekDate);//Current week scores & matchups page
@@ -78,7 +81,7 @@ public class Main
             dataEventId = entry.getKey();//Matchup index used almost everywhere...
             String dataGame = xRefMap.get(dataEventId);//Used sometimes to index matchups
             System.out.println("Main63 START MAIN LOOP////////////////////////////////////////////////////////////START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "////////////////////////////////////////////////////////////////////START MAIN LOOP");
-            driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + Main.weekDate);//WebDriver now holds Main covers consensus page
+            //driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + Main.weekDate);//WebDriver now holds Main covers consensus page
             //dataCollector.collectConsensusData(Main.driver);
             System.out.println("Main93 END MAIN LOOP///////////////////////////////////////////////" +  dataCollector.getGameIdentifierMap().get(dataEventId) + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }//END MAIN LOOP///////////////////////////////////////////////////////////////////////////<END>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////END MAIN LOOP

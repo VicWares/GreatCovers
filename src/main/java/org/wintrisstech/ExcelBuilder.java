@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221017 GreatCovers
+ * version 221018 GreatCovers
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -97,9 +97,6 @@ public class ExcelBuilder
     }
     public void enterData()//From HashMaps
     {
-        int minute = LocalTime.now().getMinute();
-        minute = (minute < 10) ? (minute + 10) : minute;//To stop time minutes = 7, e.g...should be 07 minutes
-        String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + minute;
         CellStyle leftStyle = sportDataWorkbook.createCellStyle();
         leftStyle.setAlignment(LEFT);
         CellStyle centerStyle = sportDataWorkbook.createCellStyle();
@@ -108,26 +105,10 @@ public class ExcelBuilder
         for (String dataEventID : Main.xRefMap.keySet())
        {
            eventIndex = excelRowIndexMap.get(dataEventID);
-           System.out.println("EB110...entering excel data to row: " + eventIndex);
-           sportDataSheet.getRow(0).createCell(0);
-           sportDataSheet.getRow(0).getCell(0).setCellStyle(leftStyle);
-           sportDataSheet.getRow(0).getCell(0).setCellValue(time);
-           sportDataSheet.getRow(eventIndex).getCell(0).setCellValue(DataCollector.gameIdentifierMap.get(dataEventID));//e.g. 2021 - Washington Football Team @ Dallas Cowboys
-           sportDataSheet.getRow(eventIndex).createCell(1);
-           sportDataSheet.getRow(eventIndex).getCell(1).setCellStyle(leftStyle);
-           sportDataSheet.getRow(eventIndex).getCell(1).setCellValue(Main.weekDate);
-           sportDataSheet.getRow(eventIndex).createCell(2);
-           sportDataSheet.getRow(eventIndex).getCell(2).setCellStyle(leftStyle);
-           sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(season);
-           sportDataSheet.getRow(eventIndex).createCell(3);//NFL week e.g. 5
-           sportDataSheet.getRow(eventIndex).getCell(3).setCellStyle(leftStyle);
-           sportDataSheet.getRow(eventIndex).getCell(3).setCellValue("Week " + Main.weekNumber);
-           sportDataSheet.getRow(eventIndex).createCell(10);// Home team full name e.g. Dallas Coyboys Column K11
-           sportDataSheet.getRow(eventIndex).getCell(10).setCellStyle(leftStyle);
-           sportDataSheet.getRow(eventIndex).getCell(10).setCellValue(homeCompleteNameMap.get(dataEventID));
-           sportDataSheet.getRow(eventIndex).createCell(64);//Consensus ATS away, column BM65
-           sportDataSheet.getRow(eventIndex).getCell(64).setCellStyle(leftStyle);
-           sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventID));
+//
+//           sportDataSheet.getRow(eventIndex).createCell(64);//Consensus ATS away, column BM65
+//           sportDataSheet.getRow(eventIndex).getCell(64).setCellStyle(leftStyle);
+//           sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventID));
            sportDataSheet.getRow(eventIndex).createCell(66);//Consensus ATS home BO67
            sportDataSheet.getRow(eventIndex).getCell(66).setCellStyle(leftStyle);
            sportDataSheet.getRow(eventIndex).getCell(66).setCellValue(Main.atsHomeMap.get(dataEventID));
