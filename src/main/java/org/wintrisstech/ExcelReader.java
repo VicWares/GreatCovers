@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221015A GreatCovers
+ * version 221017 GreatCovers
  * Read large SportData excel work book (SportData.xlsx) on user's desktop and return workBook
  *******************************************************************/
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -20,14 +20,16 @@ public class ExcelReader
         try
         {
             is = new FileInputStream(deskTopPath);
-            //ZipSecureFile.setMinInflateRatio(0);//To prevent zip bomb exception
             sportDataWorkbook = (XSSFWorkbook) WorkbookFactory.create(is);
+            System.out.println("Rading => " + sportDataWorkbook);
+            ExcelBuilder.sportDataWorkbook = sportDataWorkbook;
             is.close();
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.out.println("Can't read sportDataWorkbook");
         }
+        System.out.println("ER31 read sportDataWorkbook => " + sportDataWorkbook);
         return sportDataWorkbook;
     }
 }

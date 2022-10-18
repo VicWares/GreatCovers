@@ -3,11 +3,9 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221015A GreatCovers
+ * version 221017 GreatCovers
  **********************************************************************************/
-import com.google.common.cache.AbstractCache;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -15,8 +13,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +20,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 public class Main
 {
-    public static HashMap<String,String> ouAwayMap = new HashMap<>();
-    public static HashMap<String,String> ouHomeMap= new HashMap<>();
-    public static HashMap<String,String> atsHomeMap= new HashMap<>();
-    public static HashMap<String,String> atsAwayMap= new HashMap<>();
-    private static String weekDate;
+    public static String weekDate;
     private static XSSFWorkbook sportDataWorkbook;
-    public static HashMap<String, String> xRefMap = new HashMap<>();
-    public static WebSiteReader webSiteReader = new WebSiteReader();
     public static ExcelReader excelReader = new ExcelReader();
     public static DataCollector dataCollector = new DataCollector();
     private static Elements nflElements;
@@ -40,16 +30,22 @@ public class Main
     public static ExcelWriter excelWriter = new ExcelWriter();
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
-    public static HashMap<String, String > MLATSawayMap = new HashMap<>();
     private Elements oddsElements;
-    private static String version = "GreatCovers 221015";
-    private static String season = "2022";
-    private static String weekNumber = "6";
+    private static String version = "GreatCovers 221016";
+    public static String season = "2022";
+    public static String weekNumber = "5";
     public static WebDriver driver = new SafariDriver();
     public static JavascriptExecutor js = (JavascriptExecutor) driver;
     private Actions act = new Actions(driver);
-    public static HashMap<String, String> weekDateMap = new HashMap<String, String>();
-    public static HashMap<String, String> cityNameMap = new HashMap<String, String>();
+    public static HashMap<String, String > MLATSawayMap = new HashMap<>();
+    public static HashMap<String, String> xRefMap = new HashMap<>();
+    public static HashMap<String,String> ouHomeMap= new HashMap<>();
+    public static HashMap<String,String> atsHomeMap= new HashMap<>();
+    public static HashMap<String,String> atsAwayMap= new HashMap<>();
+    public static HashMap<String,String> ouAwayMap = new HashMap<>();
+    public static HashMap<String, String> weekDateMap = new HashMap<String, String>();//Constructor builds HashMap of NFL week calendar dates (e.g 2022-09-08) referenced by NFL week number (e.g. 4)
+    public static HashMap<String, String> cityNameMap = new HashMap<String, String>();//Constructor builds HashMap of NFL team city names referenced by bogus Covers city names (e.g East Rutherford) referenced by NFL city names (e.g. New York)
+    public static HashMap<String, Integer> excelRowIndexMap = new HashMap<String, Integer>();//HashMap references excel row numbers (e.g. 5) by dataEventId (e.g. 87409).  Each excel row has a specific data-event-id
     public Main()
     {
         driver = new SafariDriver();
@@ -62,38 +58,32 @@ public class Main
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         new CityNameMapBuilder();//Builds full city name map to correct for Covers variations in team city names
         new WeekDateMapBuilder();//Builds Game dates for current week
-        driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Current week scores & matchups page
-        clickCookies(64);
+        weekDate = weekDateMap.get(weekNumber);
+        System.out.println("Main57 This week is: " + weekDate);
+        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ Main.weekDate);
         List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));//Dummy elements to determine how many games to index this week...don't use the Element contents
-        System.out.println("Main66 events => " + events.size());
+        System.out.println("Main63 events dummy List size => " + events.size());
         xRefMap = buildXref(events);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
-        System.out.println("Main68...xRefMap => " + xRefMap);
+        excelRowIndexMap = buildExcelRowIndexMap();
+        System.out.println("Main67...Excel Row index Map => " + excelRowIndexMap);
         sportDataWorkbook = excelReader.readSportDataWorkbook();
+        System.out.println("Main78 sportDataWorkbook => " + sportDataWorkbook);
         ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
-        for (Map.Entry<String, String> entry : xRefMap.entrySet())
+        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + Main.weekDate);//Current week scores & matchups page
+        clickCookies("DC72");
+        dataCollector.collectTeamDataForThisWeek();
+        //******************************************************************************************************************<START>*********************************************************************************************************************************************************************
+        for (Map.Entry<String, String> entry : xRefMap.entrySet())//START MAIN LOOP//////////////////////////////////////<START>//////////////////////////////////////////////////////////////////////////////////////////////START MAIN LOOP
         {
             dataEventId = entry.getKey();//Matchup index used almost everywhere...
             String dataGame = xRefMap.get(dataEventId);//Used sometimes to index matchups
-            System.out.println("Main63 START MAIN LOOP-----------------------------------------------------START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "-------------<=====================>------------------------------------------------------------------------------START MAIN LOOP");
-            driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);//Main covers consensus page
-            try
-            {
-                String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
-                driver.findElement(By.cssSelector(s)).click();
-                clickCookies(81);
-                String MlATSaway = Main.driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[5]/div[2]/div[1]/div[2]")).getText().trim();
-                System.out.println("Main85...MLATSaway " + MlATSaway);
-                Main.MLATSawayMap.put(dataEventId, MlATSaway);
-                System.out.println("Main86........" + Main.MLATSawayMap);
-                System.out.println("Main87....got MLATSaway...and clicked...Money Leaders!");
-            }
-            catch (Exception e)
-            {
-                System.out.println("Main90.....can't find Money Leaders button.");
-            }
-            excelBuilder.buildExcel(dataEventId, excelLineNumberIndex);
-            System.out.println("Main93 END MAIN LOOP----------- " +  dataCollector.getGameIdentifierMap().get(dataEventId) + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
-        }
+            System.out.println("Main63 START MAIN LOOP////////////////////////////////////////////////////////////START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "////////////////////////////////////////////////////////////////////START MAIN LOOP");
+            driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + Main.weekDate);//WebDriver now holds Main covers consensus page
+            //dataCollector.collectConsensusData(Main.driver);
+            System.out.println("Main93 END MAIN LOOP///////////////////////////////////////////////" +  dataCollector.getGameIdentifierMap().get(dataEventId) + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
+        }//END MAIN LOOP///////////////////////////////////////////////////////////////////////////<END>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////END MAIN LOOP
+        //******************************************************************************************************************<END>*********************************************************************************************************************************************************************
+
         excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
@@ -101,7 +91,17 @@ public class Main
         excelWriter.closeOutputStream();
         System.out.println("Main102......Completed GreatCovers Successfully...Hooray...");
     }
-    private static void clickCookies(int sourceLineNumber)
+
+    private static HashMap<String, Integer> buildExcelRowIndexMap()
+    {
+        int row = 3;//First entry to Excel sheet below header
+        for(String dataEventId : xRefMap.keySet())
+        {
+            excelRowIndexMap.put(dataEventId, Integer.valueOf(row++));
+        }
+        return excelRowIndexMap;
+    }
+    public static void clickCookies(String sourceLineNumber)
     {
         try
         {
@@ -114,10 +114,11 @@ public class Main
             System.out.println("NO...Click on Cookie Button, line# " + sourceLineNumber);
         }
     }
-    public static class CityNameMapBuilder//#matchup_group_top > div.cmg_game_container.cmg_matchup_game.cmg_ingame.cmg_matchups_football > div.cmg_game_data.cmg_matchup_game_box > div.cmg_l_row.cmg_matchup_list_gamebox > a:nth-child(3)
+    public static class CityNameMapBuilder
     {
         public CityNameMapBuilder()
         {
+            System.out.println("Main117 Building CityNameMap");
             cityNameMap.put("Minneapolis", "Minnesota");//Minnesota Vikings
             cityNameMap.put("Tampa", "Tampa Bay");//Tampa Bay Buccaneers
             cityNameMap.put("Tampa Bay", "Tampa Bay");//Tampa Bay Buccaneers
@@ -158,12 +159,14 @@ public class Main
             cityNameMap.put("Los Angeles", "Los Angeles");//Los Angeles Rams
             cityNameMap.put("San Francisco", "San Francisco");//San Francisco 49ers
             cityNameMap.put("Seattle", "Seattle");//Seattle Seahawks
+            System.out.println("Main157 cityNameMap => " + cityNameMap);
         }
     }
     public static class WeekDateMapBuilder
     {
         public WeekDateMapBuilder()
         {
+            System.out.println("Main166 Building weekDateMap");
             weekDateMap.put("1", "2022-09-08");//Season 2022 start...Week 1
             weekDateMap.put("2", "2022-09-15");//Weeks start on Thursdays
             weekDateMap.put("3", "2022-09-22");
@@ -183,10 +186,12 @@ public class Main
             weekDateMap.put("17", "2022-12-29");
             weekDateMap.put("18", "2023-01-08");
             weekDateMap.put("19", "2023-02-05");
+            System.out.println("Main184 weekDateMap => " + weekDateMap);
         }
     }
     public static HashMap<String, String> buildXref(List<WebElement> events)
     {
+        System.out.println("Main 191 Building xRefMap");
         for (WebElement e : events)
         {
             String dataEventId = e.getAttribute("data-event-id");
@@ -194,6 +199,7 @@ public class Main
             dataGame = dataGame.substring(28, 34);
             xRefMap.put(dataEventId, dataGame);
         }
+        System.out.println("Main199 xRefMap => " + xRefMap);
         return xRefMap;
     }
 }

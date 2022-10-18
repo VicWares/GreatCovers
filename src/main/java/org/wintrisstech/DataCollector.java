@@ -2,18 +2,17 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221015A GreatCovers
+ * version 221017 GreatCovers
  * Builds data event id array and calendar date array
  *******************************************************************/
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.wintrisstech.Main.atsAwayMap;
+import static org.wintrisstech.Main.*;
 public class DataCollector
 {
     private static HashMap<String, String> bet365HomeTeamOdds = new HashMap<>();
@@ -64,7 +63,7 @@ public class DataCollector
     private ArrayList<String> atsHomes = new ArrayList<String>();
     private ArrayList<String> thisWeekAwayTeams = new ArrayList<String>();
     private HashMap<String, String> gameDatesMap = new HashMap<>();
-    private HashMap<String, String> gameIdentifierMap = new HashMap<>();
+    public static HashMap<String, String> gameIdentifierMap = new HashMap<>();
     private HashMap<String, String> homeFullNameMap = new HashMap<>();
     private HashMap<String, String> awayFullNameMap = new HashMap<>();
     private HashMap<String, String> homeShortNameMap = new HashMap<>();
@@ -87,81 +86,79 @@ public class DataCollector
     private String homeShortName;
     private String month;
     private String day;
-    public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
+    public void collectTeamDataForThisWeek()//From covers.com website for this week's matchups
     {
-        for (Element e : weekElements)//Build week matchup IDs array
+        for (String dataEventId : Main.xRefMap.keySet())//Build week matchup IDs array
         {
-            month = e.attr("");
-            homeTeamFullName = e.attr("data-home-team-fullname-search");//e.g. Houston...correcting for different city/name usage
-            homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
-            homeTeamShortName = weekElements.attr("data-home-team-shortname-search");//Home team abbreviation e.g. LAR
-            awayTeamShortName = weekElements.attr("data-away-team-shortname-search");//Home team abbreviation e.g. BUF
-            homeTeamCity = e.attr("data-home-team-city-search");
-            homeTeamCity = cityNameMap.get(homeTeamCity);
-            homeTeamCompleteName = homeTeamCity + " " + homeTeamNickname;
-            awayTeamFullName = e.attr("data-away-team-fullname-search");//e.g. Dallas
-            awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
-            awayTeamCity = e.attr("data-away-team-city-search");
-            awayTeamCity = cityNameMap.get(awayTeamCity);
-            awayTeamCompleteName = awayTeamCity + " " + awayTeamNickname;
-            gameIdentifier = thisSeason + " - " + awayTeamCompleteName + " @ " + homeTeamCompleteName;
-            dataEventId = e.attr("data-event-id");
-            gameDateTime = e.attr("data-game-date").split(" ");
-            gameDate = gameDateTime[0];
-            awayTeamScore = e.attr("data-away-score");
-            thisWeek = e.attr("data-competition-type");
-            thisWeekGameDates.add(gameDate);
-            gameDatesMap.put(dataEventId, gameDate);
-            gameIdentifierMap.put(dataEventId, gameIdentifier);
-            thisWeekHomeTeams.add(homeTeamCompleteName);
-            thisWeekAwayTeams.add(awayTeamCompleteName);
+            Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ weekDate);
+            WebElement homeTeamFullNameElement = Main.driver.findElement(By.cssSelector("[data-home-team-fullname-search][data-event-id='" + dataEventId + "']"));
+            String homeTeamFullName = homeTeamFullNameElement.getAttribute("data-home-team-fullname-search");
+//            homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
+//            homeTeamShortName = weekElements.attr("data-home-team-shortname-search");//Home team abbreviation e.g. LAR
+//            awayTeamShortName = weekElements.attr("data-away-team-shortname-search");//Home team abbreviation e.g. BUF
+//            homeTeamCity = e.attr("data-home-team-city-search");
+//            homeTeamCity = cityNameMap.get(homeTeamCity);
+//            homeTeamCompleteName = homeTeamCity + " " + homeTeamNickname;
+//            awayTeamFullName = e.attr("data-away-team-fullname-search");//e.g. Dallas
+//            awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
+//            awayTeamCity = e.attr("data-away-team-city-search");
+//            awayTeamCity = cityNameMap.get(awayTeamCity);
+//            awayTeamCompleteName = awayTeamCity + " " + awayTeamNickname;
+//            gameIdentifier = thisSeason + " - " + awayTeamCompleteName + " @ " + homeTeamCompleteName;
+//            dataEventId = e.attr("data-event-id");
+//            gameDateTime = e.attr("data-game-date").split(" ");
+//            gameDate = gameDateTime[0];
+//            awayTeamScore = e.attr("data-away-score");
+//            thisWeek = e.attr("data-competition-type");
+//            thisWeekGameDates.add(gameDate);
+//            gameDatesMap.put(dataEventId, gameDate);
+//            gameIdentifierMap.put(dataEventId, gameIdentifier);
+//            thisWeekHomeTeams.add(homeTeamCompleteName);
+//            thisWeekAwayTeams.add(awayTeamCompleteName);
             homeFullNameMap.put(dataEventId, homeTeamFullName);
-            awayFullNameMap.put(dataEventId, awayTeamFullName);
-            homeShortNameMap.put(dataEventId, homeTeamShortName);
-            awayShortNameMap.put(dataEventId, awayTeamShortName);
-            homeTeamCompleteNameMap.put(dataEventId, homeTeamCompleteName);
-            awayTeamCompleteNameMap.put(dataEventId, awayTeamCompleteName);
-            thisWeekHomeTeamScores.add(homeTeamScore);
-            thisWeekAwayTeamScores.add((awayTeamScore));
-            thisGameWeekNumbers.add(thisWeek);
-            awayShortName = e.attr("data-away-team-shortname-search");//Away team
-            awayShortNameMap.put(dataEventId, awayShortName);
-            homeShortName = e.attr("data-home-team-shortname-search");//Home team
-            homeShortNameMap.put(dataEventId, homeShortName);
+//            awayFullNameMap.put(dataEventId, awayTeamFullName);
+//            homeShortNameMap.put(dataEventId, homeTeamShortName);
+//            awayShortNameMap.put(dataEventId, awayTeamShortName);
+//            homeTeamCompleteNameMap.put(dataEventId, homeTeamCompleteName);
+//            awayTeamCompleteNameMap.put(dataEventId, awayTeamCompleteName);
+//            thisWeekHomeTeamScores.add(homeTeamScore);
+//            thisWeekAwayTeamScores.add((awayTeamScore));
+//            thisGameWeekNumbers.add(thisWeek);
+//            awayShortName = e.attr("data-away-team-shortname-search");//Away team
+//            awayShortNameMap.put(dataEventId, awayShortName);
+//            homeShortName = e.attr("data-home-team-shortname-search");//Home team
+//            homeShortNameMap.put(dataEventId, homeShortName);
         }
+        System.out.println("DC133 homeFullNameMap => " + homeFullNameMap);
     }
-    public void collectConsensusData(Elements thisMatchupConsensus, String dataEventId)
+    public void collectConsensusData(WebDriver consensusElements)
     {
-        this.dataEventId = String.valueOf(dataEventId);
-        String ouAway = null;
-        String ouHome = null;
-        String atsHome = null;
-        String atsAway = null;
-        Elements rightConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersright");//Home/Under
-        Elements leftConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersleft");//Away/Over
-        try//To catch missing consensus data due to delayed or cancelled game
-        {
-            ouHome = rightConsensus.select("div").get(1).text();
-            System.out.println("DC145 ouHome => " + ouHome);
-            ouAway = leftConsensus.select("div").get(1).text();
-            atsAway = leftConsensus.select("div").get(0).text();
-            atsHome = rightConsensus.select("div").get(0).text();
-        }
-        catch (Exception e)
-        {
-            System.out.println("DC151 DataCollector, no consensus data for " + gameIdentifier);
-        }
-        Main.ouAwayMap.put(dataEventId, ouAway);
-        Main.ouHomeMap.put(String.valueOf(dataEventId), ouHome);
-        Main.atsHomeMap.put(String.valueOf(dataEventId), atsAway);
-        Main.atsAwayMap.put(String.valueOf(dataEventId), atsHome);
+            try
+            {
+                String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
+                Main.driver.findElement(By.cssSelector(s)).click();//Money Leaders
+                Main.clickCookies("DC139");
+                String MlATSaway = driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[5]/div[2]/div[1]/div[2]")).getText().trim();
+                System.out.println("Main85...MLATSaway " + MlATSaway);
+                Main.MLATSawayMap.put(dataEventId, MlATSaway);
+                System.out.println("Main81........clicked Money Leaders " + Main.MLATSawayMap);
+            }
+            catch (Exception e)
+            {
+                System.out.println("Main85.....can't find Money Leaders button.");
+            }
+
+//        Main.ouAwayMap.put(dataEventId, ouAway);
+//        Main.ouHomeMap.put(String.valueOf(dataEventId), ouHome);
+//        Main.atsHomeMap.put(String.valueOf(dataEventId), atsAway);
+//        Main.atsAwayMap.put(String.valueOf(dataEventId), atsHome);
     }
     public void collectOddsData(WebElement moneyLineElements)
     {
         try
         {
             System.out.println("DC169 Starting collectTotalHomeCloseOdds()");
-            String totalHomeCloseOdds = String.valueOf(Main.driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
+            String totalHomeCloseOdds = String.valueOf(driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
             System.out.println("DC171 totalHomeCloseOdds => " + totalHomeCloseOdds);
         }
         catch (Exception e)

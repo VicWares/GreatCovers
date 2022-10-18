@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wintrisstech</groupId>
     <artifactId>GreatCovers</artifactId>
-    <version>2210115A</version>
+    <version>2210117</version>
     <dependencies>
         <dependency>
             <groupId>org.apache.poi</groupId>

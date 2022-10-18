@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders.">
+    <list default="true" id="4a0e7f1a-e11f-40c2-83c6-a1c52cd74d28" name="Changes" comment="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/DataCollector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/ExcelWriter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/WebSiteReader.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/wintrisstech/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -106,7 +105,21 @@
       <workItem from="1665792281238" duration="12990000" />
       <workItem from="1665852275738" duration="8446000" />
       <workItem from="1665869456237" duration="5918000" />
-      <workItem from="1665877566331" duration="9968000" />
+      <workItem from="1665877566331" duration="15335000" />
+      <workItem from="1665920537044" duration="5067000" />
+      <workItem from="1665945924009" duration="634000" />
+      <workItem from="1665946943504" duration="601000" />
+      <workItem from="1665949878733" duration="2041000" />
+      <workItem from="1665960247567" duration="6634000" />
+      <workItem from="1665970161371" duration="8115000" />
+      <workItem from="1665978855259" duration="490000" />
+      <workItem from="1666027427904" duration="719000" />
+      <workItem from="1666028323313" duration="5000" />
+      <workItem from="1666028464478" duration="683000" />
+      <workItem from="1666040991524" duration="5517000" />
+      <workItem from="1666049386688" duration="997000" />
+      <workItem from="1666062246120" duration="716000" />
+      <workItem from="1666063448630" duration="2070000" />
     </task>
     <task id="LOCAL-00001" summary="GreatCovers version 221009A  Initial.  Still adding components.  Keeping Jsoup and WebDriver">
       <created>1665366702864</created>
@@ -143,7 +156,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665861149246</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet.">
+      <created>1665889577945</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1665889577945</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,6 +187,7 @@
     <MESSAGE value="GreatCovers version 221014.  Getting Consensus OK...clean up." />
     <MESSAGE value="GreatCovers version 221014A.  Clean up. Fixed single digit minutes in time record." />
     <MESSAGE value="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders." />
-    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221015.  Building xRefMap with web driver source. Getting consesnsus and Money Leaders." />
+    <MESSAGE value="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet." />
+    <option name="LAST_COMMIT_MESSAGE" value="GreatCovers version 221015A.  Getting Money Leader ATS Away consensus but not going to Excel sheet." />
   </component>
 </project>
