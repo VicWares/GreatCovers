@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 221018 GreatCovers
+ * version 221018A GreatCovers
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -11,11 +11,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.JsonToWebElementConverter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import static org.wintrisstech.Main.*;
 public class DataCollector
@@ -74,7 +77,6 @@ public class DataCollector
     private HashMap<String, String> homeShortNameMap = new HashMap<>();
     private HashMap<String, String> awayShortNameMap = new HashMap<>();
     private HashMap<String, String> atsHomeMap = new HashMap<>();
-    //private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouHomeMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -98,7 +100,6 @@ public class DataCollector
     public void collectTeamDataForThisWeek()//From covers.com website for this week's matchups
     {
         sportDataSheet = sportDataWorkbook.getSheet("Data");
-        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ weekDate);//Web driver has all team info for this week
         for (String dataEventId : Main.xRefMap.keySet())//Build week matchup IDs array
         {
             int excelRowIndex = excelRowIndexMap.get(dataEventId);
@@ -132,72 +133,43 @@ public class DataCollector
 
             sportDataSheet.getRow(excelRowIndex).createCell(10);// Column K11, Home team full name e.g. Dallas Coyboys Column K11
             sportDataSheet.getRow(excelRowIndex).getCell(10).setCellValue(homeCompleteName);
-
-//            String totalHomeCloseOdds = String.valueOf(Main.driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")));
-//            sportDataSheet.getRow(excelRowIndex).createCell(64);// BM65 ats away odds
-//            sportDataSheet.getRow(excelRowIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventId));
-            //            homeTeamCity = cityNameMap.get(homeTeamCity);
-            //            homeTeamShortName = weekElements.attr("data-home-team-shortname-search");//Home team abbreviation e.g. LAR
-            //            awayTeamShortName = weekElements.attr("data-away-team-shortname-search");//Home team abbreviation e.g. BUF
-            //            homeTeamCity = e.attr("data-home-team-city-search");
-//            awayTeamFullName = e.attr("data-away-team-fullname-search");//e.g. Dallas
-//            awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
-//            awayTeamCity = e.attr("data-away-team-city-search");
-//            awayTeamCity = cityNameMap.get(awayTeamCity);
-//            awayTeamCompleteName = awayTeamCity + " " + awayTeamNickname;
-//            gameIdentifier = thisSeason + " - " + awayTeamCompleteName + " @ " + homeTeamCompleteName;
-//            dataEventId = e.attr("data-event-id");
-//            gameDateTime = e.attr("data-game-date").split(" ");
-//            gameDate = gameDateTime[0];
-//            awayTeamScore = e.attr("data-away-score");
-//            thisWeek = e.attr("data-competition-type");
-//            thisWeekGameDates.add(gameDate);
-//            gameDatesMap.put(dataEventId, gameDate);
-//            gameIdentifierMap.put(dataEventId, gameIdentifier);
-//            thisWeekHomeTeams.add(homeTeamCompleteName);
-//            thisWeekAwayTeams.add(awayTeamCompleteName);
-//            awayFullNameMap.put(dataEventId, awayTeamFullName);
-//            homeShortNameMap.put(dataEventId, homeTeamShortName);
-//            awayShortNameMap.put(dataEventId, awayTeamShortName);
-//            homeTeamCompleteNameMap.put(dataEventId, homeTeamCompleteName);
-//            awayTeamCompleteNameMap.put(dataEventId, awayTeamCompleteName);
-//            thisWeekHomeTeamScores.add(homeTeamScore);
-//            thisWeekAwayTeamScores.add((awayTeamScore));
-//            thisGameWeekNumbers.add(thisWeek);
-//            awayShortName = e.attr("data-away-team-shortname-search");//Away team
-//            awayShortNameMap.put(dataEventId, awayShortName);
-//            homeShortName = e.attr("data-home-team-shortname-search");//Home team
-//            homeShortNameMap.put(dataEventId, homeShortName);
         }
-        System.out.println("DC133 homeFullNameMap => " + homeFullNameMap);
     }
-    public void collectConsensusData(WebDriver consensusElements)
+    public void collectConsensusData()
     {
-            try
-            {
-                String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
-                Main.driver.findElement(By.cssSelector(s)).click();//Money Leaders
-                Main.clickCookies("DC139");
-                String MlATSaway = driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[5]/div[2]/div[1]/div[2]")).getText().trim();
-                System.out.println("Main85...MLATSaway " + MlATSaway);
-                Main.MLATSawayMap.put(dataEventId, MlATSaway);
-                System.out.println("Main81........clicked Money Leaders " + Main.MLATSawayMap);
-            }
-            catch (Exception e)
-            {
-                System.out.println("Main85.....can't find Money Leaders button.");
-            }
+        String s = driver.findElement(By.cssSelector("div.covers-CoversConsensusDetailsTable-finalWagersleft")).getText();
+        System.out.println("......" + s);
+//            try
+//            {
+//                String s = "li.covers-CoversConsensus-sides:nth-child(1) > a:nth-child(1)";//Get Money Leaders
+//                Main.driver.findElement(By.cssSelector(s)).click();//Money Leaders
+//                Main.clickCookies("DC139");
+//                String MlATSaway = driver.findElement(By.xpath("/html/body/div[2]/div/div/div/div[1]/div[5]/div[2]/div[1]/div[2]")).getText().trim();
+//                System.out.println("Main85...MLATSaway " + MlATSaway);
+//                Main.MLATSawayMap.put(dataEventId, MlATSaway);
+//                System.out.println("Main81........clicked Money Leaders " + Main.MLATSawayMap);
+//            }
+//            catch (Exception e)
+//            {
+//                System.out.println("Main85.....can't find Money Leaders button.");
+//            }
 
 //        Main.ouAwayMap.put(dataEventId, ouAway);
 //        Main.ouHomeMap.put(String.valueOf(dataEventId), ouHome);
 //        Main.atsHomeMap.put(String.valueOf(dataEventId), atsAway);
 //        Main.atsAwayMap.put(String.valueOf(dataEventId), atsHome);
     }
-    public void collectOddsData(WebElement moneyLineElements)
+    public void collectOddsData()
     {
-//        String totalHomeCloseOdds = String.valueOf(Main.driver.findElement(By.cssSelector("#__totalDiv-nfl-265308 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(2) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > div:nth-child(1)")))
-//        sportDataSheet.getRow(excelRowIndex).createCell(64);// BM65 ats away odds
-//        sportDataSheet.getRow(excelRowIndex).getCell(64).setCellValue(Main.atsAwayMap.get(dataEventId));
+     Main.driver.findElement(By.cssSelector("a[href='/sport/football/nfl/odds']")).click();//Select Odds button
+     for (HashMap.Entry<String,String> entry : xRefMap.entrySet())
+      {
+          String dataEventId = entry.getKey();
+          String dataGame = entry.getValue();
+          int excelRowIndex = excelRowIndexMap.get(dataEventId);
+          WebElement dataEventIdElement = Main.driver.findElement(By.cssSelector("[data-event-id='" + dataEventId + "']"));//Driver gets all team elements associated with this dataEventId
+          System.out.println(".............openOdds=> " + driver.findElement(By.cssSelector(".__american")).getText());
+       }
 //        try
 //        {
 //            System.out.println("DC169 Starting collectTotalHomeCloseOdds()");

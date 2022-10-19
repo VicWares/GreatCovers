@@ -3,7 +3,7 @@ package org.wintrisstech;
  * Must be run before Selenium for initial setup
  * cd /usr/bin/
  * sudo safaridriver --enable
- * version 221018 GreatCovers
+ * version 221018A GreatCovers
  **********************************************************************************/
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,7 +33,7 @@ public class Main
     private static Elements consensusElements;
     private static int excelLineNumberIndex = 3;//Start filling excel sheet after header
     private Elements oddsElements;
-    private static String version = "GreatCovers 221016";
+    private static String version = "GreatCovers 221018A";
     public static String season = "2022";
     public static String weekNumber = "5";
     public static WebDriver driver = new SafariDriver();
@@ -62,32 +62,28 @@ public class Main
         new WeekDateMapBuilder();//Builds Game dates for current week
         weekDate = weekDateMap.get(weekNumber);
         System.out.println("Main57 This week is: " + weekDate);
-        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ Main.weekDate);
-        List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));//Dummy elements to determine how many games to index this week...don't use the Element contents
-        System.out.println("Main63 events dummy List size => " + events.size());
+        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate="+ Main.weekDate);//Main Covers page
+        List<WebElement> events = driver.findElements(By.cssSelector("div.cmg_game_data"));//Determine how many games to index this week
+        System.out.println("Main67 Games this week => " + events.size());
         xRefMap = buildXref(events);//Cross-reference from dava-event-id to data-game e.g. 87700=265355.  Both are used for referencing matchups at various times!!
         excelRowIndexMap = buildExcelRowIndexMap();
         System.out.println("Main67...Excel Row index Map => " + excelRowIndexMap);
         sportDataWorkbook = excelReader.readSportDataWorkbook();
         dataCollector.setSportDataWorkbook(sportDataWorkbook);
-        System.out.println("Main78 sportDataWorkbook => " + sportDataWorkbook);
-        ExcelBuilder excelBuilder = new ExcelBuilder(sportDataWorkbook);
-        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + Main.weekDate);//Current week scores & matchups page
-        clickCookies("DC72");
+        Main.driver.get("https://www.covers.com/sports/nfl/matchups?selectedDate=" + Main.weekDate);//Driver now holds Current week scores & matchups page
+        clickCookies("Main75");
         dataCollector.collectTeamDataForThisWeek();
+        Main.driver.get("https://contests.covers.com/consensus/matchupconsensusdetails/0a80bbdb-250c-4974-9358-af160032dd96?showExperts=False");
+        dataCollector.collectConsensusData();
         //******************************************************************************************************************<START>*********************************************************************************************************************************************************************
         for (Map.Entry<String, String> entry : xRefMap.entrySet())//START MAIN LOOP//////////////////////////////////////<START>//////////////////////////////////////////////////////////////////////////////////////////////START MAIN LOOP
         {
             dataEventId = entry.getKey();//Matchup index used almost everywhere...
             String dataGame = xRefMap.get(dataEventId);//Used sometimes to index matchups
             System.out.println("Main63 START MAIN LOOP////////////////////////////////////////////////////////////START MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + dataGame + "////////////////////////////////////////////////////////////////////START MAIN LOOP");
-            //driver.get("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + Main.weekDate);//WebDriver now holds Main covers consensus page
-            //dataCollector.collectConsensusData(Main.driver);
-            System.out.println("Main93 END MAIN LOOP///////////////////////////////////////////////" +  dataCollector.getGameIdentifierMap().get(dataEventId) + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
+            System.out.println("Main93 END MAIN LOOP///////////////////////////////////////////////" +  dataEventId + " " + dataGame + " -----------------<=====================>----------------------------------END MAIN LOOP FOR dataEventId/dataGame " + dataEventId + "/" + xRefMap.get(dataEventId) + "-------------------------------------------------------------------------------------------END MAIN LOOP");
         }//END MAIN LOOP///////////////////////////////////////////////////////////////////////////<END>///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////END MAIN LOOP
         //******************************************************************************************************************<END>*********************************************************************************************************************************************************************
-
-        excelBuilder.enterData();
         driver.close();
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
@@ -121,7 +117,6 @@ public class Main
     {
         public CityNameMapBuilder()
         {
-            System.out.println("Main117 Building CityNameMap");
             cityNameMap.put("Minneapolis", "Minnesota");//Minnesota Vikings
             cityNameMap.put("Tampa", "Tampa Bay");//Tampa Bay Buccaneers
             cityNameMap.put("Tampa Bay", "Tampa Bay");//Tampa Bay Buccaneers
@@ -169,7 +164,6 @@ public class Main
     {
         public WeekDateMapBuilder()
         {
-            System.out.println("Main166 Building weekDateMap");
             weekDateMap.put("1", "2022-09-08");//Season 2022 start...Week 1
             weekDateMap.put("2", "2022-09-15");//Weeks start on Thursdays
             weekDateMap.put("3", "2022-09-22");
@@ -194,7 +188,6 @@ public class Main
     }
     public static HashMap<String, String> buildXref(List<WebElement> events)
     {
-        System.out.println("Main 191 Building xRefMap");
         for (WebElement e : events)
         {
             String dataEventId = e.getAttribute("data-event-id");
